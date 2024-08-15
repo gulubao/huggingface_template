@@ -4,8 +4,28 @@
 
 ## 安装
 
-1. 克隆此仓库
-2. 安装依赖：`pip install -r requirements.txt`
+```zsh
+conda deactivate
+conda remove -n tf --all -y
+conda clean -a -f -y
+cd ~/.cache/pip && sudo rm -rf *
+cd ~
+#pip install --upgrade --force-reinstall --no-deps --no-cache-dir xxx
+```
+
+```zsh
+conda update -n base conda -y
+conda create -n tf python=3.11 -y
+conda activate tf
+conda install pytorch torchvision torchaudio pytorch-cuda=12.4 -c pytorch -c nvidia -y
+pip install transformers
+pip install accelerate
+pip install datasets
+conda install conda-forge::jupyterlab -y
+```
+
+https://huggingface.co/docs/transformers/main/en/custom_models
+https://huggingface.co/docs/transformers/main/en/trainer
 
 ## 使用方法
 

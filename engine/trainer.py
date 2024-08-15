@@ -3,6 +3,22 @@ from accelerate import Accelerator
 
 from transformers import TrainerCallback
 
+
+class CustomTrainer(Trainer):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def compute_loss(self, model, inputs, return_outputs=False):
+        # 自定义损失计算逻辑
+        pass
+
+    def training_step(self, model, inputs):
+        # 自定义训练步骤
+        pass
+
+    # 其他需要自定义的方法...
+
+
 class CustomCallback(TrainerCallback):
     def on_epoch_end(self, args, state, control, **kwargs):
         print(f"Epoch {state.epoch} ended")
@@ -11,7 +27,7 @@ class CustomCallback(TrainerCallback):
         if state.is_local_process_zero:
             print(f"Step {state.global_step}: loss = {logs['loss']:.4f}")
 
-def do_train(args, model, train_dataset, eval_dataset, accelerator: Accelerator):
+def do_train(args, model, train_dataset, eval_dataset, accelerator):
     training_args = TrainingArguments(
         output_dir=args.output_dir,
         num_train_epochs=args.num_epochs,
@@ -35,13 +51,14 @@ def do_train(args, model, train_dataset, eval_dataset, accelerator: Accelerator)
         args=training_args,
         train_dataset=train_dataset,
         eval_dataset=eval_dataset,
-        callbacks=[CustomCallback()]
+        callbacks=[CustomCallback()],
     )
 
     # 使用 Accelerator 包装 Trainer
     trainer = accelerator.prepare(trainer)
 
-    trainer.train()
+    # 使用 resume_from_checkpoint 参数
+    trainer.train(resume_from_checkpoint=args.resume_from_checkpoint)
 
     # 评估
     eval_result = trainer.evaluate()
