@@ -2,27 +2,29 @@
     // 使用 IntelliSense 了解相关属性。 
     // 悬停以查看现有属性的描述。
     // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
-
-    // https://github.com/yuanzhoulvpi2017/vscode_debug_transformers
     "version": "0.2.0",
-    // sudo lsof -i :9501 # 找出占用9501端口的进程
     "configurations": [
-        { 
+        {
             "name": "sh_file_debug",
             "type": "debugpy",
             "request": "attach",
             "connect": {
                 "host": "localhost",
-                "port": 9501
+                "port": 9501 // sudo lsof -i :9501 # 找出占用9501端口的进程
             },
-            "justMyCode": true
-        },
-        {
-            "name": "Python 调试程序: 当前文件",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "${file}",
-            "console": "integratedTerminal"
+            "justMyCode": false,
+            "pathMappings": [ // Debug only into specific packages
+                {
+                    "localRoot": "${workspaceFolder}",
+                    "remoteRoot": "${workspaceFolder}"
+                },{
+                    "localRoot": "~/miniconda3/envs/tf/lib/python3.11/site-packages/transformers",
+                    "remoteRoot": "~/miniconda3/envs/tf/lib/python3.11/site-packages/transformers"
+                },{
+                    "localRoot": "~/miniconda3/envs/tf/lib/python3.11/site-packages/datasets",
+                    "remoteRoot": "~/miniconda3/envs/tf/lib/python3.11/site-packages/datasets"
+                }
+            ]
         }
     ]
 }
