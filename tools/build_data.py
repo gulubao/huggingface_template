@@ -12,7 +12,7 @@ from config.defaults import default_parser
 from utils.utils_preprocess import label_data
 
 sys.path.append('../')
-from house_unit_match_ml.utils_data import load_organize_tables, split_data
+from .utils_data import load_organize_tables, split_data
 
 def _build_data(args):
     args.logger.info("Loading and organizing data...")
