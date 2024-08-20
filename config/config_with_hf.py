@@ -112,12 +112,16 @@ class CustomArguments:
     # -----------------------------------------------------------------------------
     retrive_batch_size: int = field(default=256, metadata={"help": "Batch size for retriving the topk accuracy"})
 
+@dataclass
+class CustomTrainingArguments(TrainingArguments):
+    output_dir: str = field(default="logs", metadata={"help": "The output directory where the model predictions and checkpoints will be written."})
+
 def default_parser():
     # 1. Parse input arguments
     # See all possible arguments in src/transformers/training_args.py
     # or by passing the --help flag to this script.
     # We now keep distinct sets of args, for a cleaner separation of concerns.
-    parser = HfArgumentParser((CustomArguments, TrainingArguments))
+    parser = HfArgumentParser((CustomArguments, CustomTrainingArguments))
     if len(sys.argv) == 2 and sys.argv[1].endswith(".json"):
         # If we pass only one argument to the script and it's the path to a json file,
         # let's parse it to get our arguments.
@@ -161,6 +165,7 @@ if __name__ == "__main__":
     conda activate tf
     cd ~/code/research/house_unit_match/house_unit_match_clip
     python config/defaults.py --mydebug True --output_dir logs
+    python config/defaults.py
     """
     # import debugpy
     # try:
