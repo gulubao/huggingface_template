@@ -12,7 +12,7 @@ from config.defaults import default_parser
 from utils.utils_preprocess import label_data
 
 sys.path.append('../')
-from .utils_data import load_organize_tables, split_data
+from utils.utils_preprocess import load_organize_tables, split_data
 
 def _build_data(args):
     args.logger.info("Loading and organizing data...")
@@ -41,9 +41,7 @@ def _build_data(args):
             f, ensure_ascii=False, indent=4
         )
 
-    # 分割训练集和测试集
     args.logger.info("Splitting data...")
-    # TODO: 根据house_id分割数据, 而不是原始id, 因为可能存在重复的条目.
     X_train, X_test = split_data(data, test_size=args.train_val_split_ratio, random_state=args.seed, args=args)
 
     X_train.to_csv(args.train_path, index=False)
@@ -66,19 +64,6 @@ def main():
         except Exception as e:
             pass
 
-    seed = args.seed
-    rank = 0
-    torch.manual_seed(seed + rank)
-    np.random.seed(seed + rank)
-    random.seed(seed + rank)
-
-    if torch.cuda.is_available():
-        # This enables tf32 on Ampere GPUs which is only 8% slower than
-        # float16 and almost as accurate as float32
-        # This was a default in pytorch until 1.12
-        torch.backends.cuda.matmul.allow_tf32 = True
-        torch.backends.cudnn.benchmark = True
-        torch.backends.cudnn.deterministic = False
     _build_data(args)
     return 0
 
