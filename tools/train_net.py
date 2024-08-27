@@ -1,6 +1,6 @@
 from config.defaults import default_parser
 from modeling import build_model
-from data import make_datasets
+from data import build_dataset
 from engine import do_train
 from accelerate import Accelerator
 import torch
@@ -14,7 +14,7 @@ def main(args):
     model = build_model(args)
     accelerator.print(f"使用{'自定义' if args.use_custom_model else '预训练'}模型")
 
-    train_dataset, eval_dataset = make_datasets(args)
+    train_dataset, eval_dataset, info = build_dataset(args)
     
     eval_result = do_train(args, model, train_dataset, eval_dataset, accelerator)
     

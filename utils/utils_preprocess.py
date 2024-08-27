@@ -3,3 +3,6 @@ def load_organize_tables(args):
 
 def split_data(args):
     pass
+
+def label_data(args):
+    pass

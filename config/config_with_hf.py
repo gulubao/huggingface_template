@@ -29,23 +29,18 @@ class CustomArguments:
     # -----------------------------------------------------------------------------
     # Raw file paths
     # -----------------------------------------------------------------------------
-    input_house_raw_file: str = field(default="../dataset/row_data/psam_h10.csv", metadata={"help": "Raw csv household-unit data file"})
-    input_person_raw_file: str = field(default="../dataset/row_data/psam_p10.csv", metadata={"help": "Raw csv person data file"})
-    interest_column_file: str = field(default="../dataset/row_data/interest_variables_2.xlsx", metadata={"help": "File containing the interested columns"})
+    input_file: str = field(default="../dataset/xxx.csv", metadata={"help": "Raw csv household-unit data file"})
 
     # -----------------------------------------------------------------------------
     # processed file paths
     # -----------------------------------------------------------------------------
     train_path: str = field(default="logs/{experiment_name}/propossed/train.csv", metadata={"help": "Processed csv household data file"})
     eval_path: str = field(default="logs/{experiment_name}/propossed/eval.csv", metadata={"help": "Processed csv household data file"})
-    gt_map_path: str = field(default="logs/{experiment_name}/propossed/gt_map.csv", metadata={"help": "Processed csv ground truth mapping file"})
 
     # -----------------------------------------------------------------------------
     # processing parameters
     # -----------------------------------------------------------------------------
-    numeric_features: List[str] = field(default_factory=lambda: ["SetBelow"], metadata={"help": "Numeric features. SetBelow"})
-    ordinal_features: Dict[str, List[int]] = field(default_factory=lambda: {"SetBelow": [0, 1, 2, 3]}, metadata={"help": "Ordinal features. SetBelow"})
-    categorical_features: List[str] = field(default_factory=lambda: ["SetBelow"], metadata={"help": "Categorical features. SetBelow"})
+
     # -----------------------------------------------------------------------------
     # Evaluation
     # -----------------------------------------------------------------------------
@@ -53,7 +48,14 @@ class CustomArguments:
 
 @dataclass
 class CustomTrainingArguments(TrainingArguments):
-    output_dir: str = field(default="logs", metadata={"help": "The output directory where the model predictions and checkpoints will be written."})
+    output_dir: str = field(
+        default="logs",
+        metadata={"help": "The output directory where the model predictions and checkpoints will be written."},
+    )
+    remove_unused_columns: Optional[bool] = field(
+        default=False, 
+        metadata={"help": "Remove columns not required by the model when using an nlp.Dataset."}
+    ) # 在debug时不删除无用列
 
 def default_parser():
     # 1. Parse input arguments
@@ -77,21 +79,7 @@ def default_parser():
     set_seed(training_args.seed)
     args.train_path = training_args.output_dir / "propossed" / "train.csv"
     args.eval_path = training_args.output_dir / "propossed" / "eval.csv"
-    args.gt_map_path = training_args.output_dir / "propossed" / "gt_map.csv"
-    args.gt_map_path.parent.mkdir(parents=True, exist_ok=True)
-    args.numeric_features = [
-        "NP", "GRNTP", "GRPIP", "HHLDRAGEP", "HINCP", "BDSP", "MRGP",
-        "RMSP", "RNTP", "VALP", "TAXAMT"
-    ]
-    args.ordinal_features = {
-        "ACR": [0, 1, 2, 3], 
-        "VEH": [0, 1, 2, 3, 4, 5, 6], 
-        "YRBLT": [1939, 1940, 1950, 1960, 1970, 1980, 1990, 2000, 2010, 2020, 2021], 
-        "SCHL": [1, 2, 3, 4, 5, 6, 7, 8]
-    }
-    args.categorical_features = [
-        "TEN_H", "HHL", "HHLDRRAC1P", "HUPAC", "R65", "BLD", "TEN_U", "DIS"
-    ]
+    args.train_path.parent.mkdir(parents=True, exist_ok=True)
     
     log_args_in_chunks(args, N=4, logger=args.logger)
     log_args_in_chunks(training_args, N=4, logger=args.logger)

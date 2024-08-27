@@ -9,10 +9,9 @@ from tqdm import tqdm
 import json
 sys.path.append('.')
 from config.defaults import default_parser
-from utils.utils_preprocess import label_data
 
 sys.path.append('../')
-from utils.utils_preprocess import load_organize_tables, split_data
+from utils.utils_preprocess import load_organize_tables, split_data, label_data
 
 def _build_data(args):
     args.logger.info("Loading and organizing data...")
@@ -29,14 +28,11 @@ def _build_data(args):
     args.logger.info("Labeling data...")    
     data = label_data(data)
 
-    with open(args.gt_map_path.parent / 'features.jsonl', 'w', encoding='utf-8') as f:
+    with open(args.gt_map_path.parent / 'xxx.jsonl', 'w', encoding='utf-8') as f:
         json.dump(
             {
-                "house_features": house_features, 
-                "house_label": ["label_h"],
-                "unit_features": unit_features, 
-                "unit_label": ["label_u"],
-                "gt_map_columns": gt_map_columns
+                "info": "xxx",
+                "info2": "info2"
             }, 
             f, ensure_ascii=False, indent=4
         )
