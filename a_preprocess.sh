@@ -1,6 +1,6 @@
 # -- environment setup --#
 cd ~/code/research/xxx
-conda activate tf
+conda activate xxx
 free -m && sudo sh -c 'sync && echo 3 > /proc/sys/vm/drop_caches' && free -m
 
 # -- remove cache --#

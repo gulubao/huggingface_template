@@ -90,7 +90,7 @@ if __name__ == "__main__":
     """
     测试
     conda activate tf
-    cd ~/code/research/house_unit_match/house_unit_match_clip
+    cd ~/code/research/xxx
     python config/defaults.py --mydebug True --output_dir logs
     python config/defaults.py
     """

@@ -1,6 +1,6 @@
 # -- environment setup --#
 cd ~/code/research/xxx
-conda activate tf
+conda activate xxx
 free -m && sudo sh -c 'sync && echo 3 > /proc/sys/vm/drop_caches' && free -m
 
 # -- remove cache --#
@@ -9,10 +9,10 @@ find $BASE_DIR -type d -name "__pycache__" -not -path "*/reference/*" -exec rm -
 echo "除reference文件夹外, $BASE_DIR下的所有__pycache__目录已被删除。"
 
 # -- tmux setup --#
-tmux new -s tcl1
-tmux attach -t tcl1
+tmux new -s task_name
+tmux attach -t task_name
 exit 
-tmux kill-session -t tcl1
+tmux kill-session -t task_name
 
 # -- debug --#
 free -m && sudo sh -c 'sync && echo 3 > /proc/sys/vm/drop_caches' && free -m
