@@ -12,4 +12,4 @@ def build_model(args):
         hidden_dropout_prob=args.hidden_dropout_prob,
         num_labels=args.num_labels
     )
-    return Blip2ForConditionalGeneration.from_pretrained(args.model_name, config=config)
+    return Blip2ForConditionalGeneration(config=config)
