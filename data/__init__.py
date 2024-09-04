@@ -1,1 +1,1 @@
-from .build import build_dataset
+from .build import build_dataset, build_data_collator

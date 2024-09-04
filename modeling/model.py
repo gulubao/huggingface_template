@@ -1,6 +1,6 @@
 
 from .configuration_blip_2 import Blip2Config
-from .modeling_blip_2 import Blip2ForConditionalGeneration
+from .modeling_blip_2 import Blip2Model
 
 
 def build_model(args):
@@ -12,4 +12,4 @@ def build_model(args):
         hidden_dropout_prob=args.hidden_dropout_prob,
         num_labels=args.num_labels
     )
-    return Blip2ForConditionalGeneration(config=config)
+    return Blip2Model(config=config)

@@ -1,28 +1,36 @@
+import sys
+from matplotlib import font_manager as fm, pyplot as plt
+font_path = '/mnt/c/Windows/Fonts/calibri.ttf'
+fm.fontManager.addfont(font_path)
+plt.rc('font', family='Calibri')
+
+sys.path.append('.') # 命令行当前所在的路径
+
 from config.defaults import default_parser
+from engine.trainer import do_train
 from modeling import build_model
-from data import build_dataset
-from engine import do_train
-from accelerate import Accelerator
-import torch
-import numpy as np
-import random
+from data import build_dataset, build_data_collator
 
-def main(args):
-    accelerator = Accelerator()
-    accelerator.print(f"当前设备: {accelerator.device}")
+def main(args, training_args):
+    train_dataset, eval_dataset, dataset_info = build_dataset(args)
+    data_collator = build_data_collator()
+    args.dataset_info = dataset_info
+    args.logger.info(f"\ndataset_info: {dataset_info}")
 
-    model = build_model(args)
-    accelerator.print(f"使用{'自定义' if args.use_custom_model else '预训练'}模型")
-
-    train_dataset, eval_dataset, info = build_dataset(args)
+    model = build_model(args, training_args)
+    eval_result = do_train(
+        training_args=training_args, 
+        model=model, 
+        train_dataset=train_dataset, 
+        eval_dataset=eval_dataset, 
+        data_collator=data_collator, 
+    )
     
-    eval_result = do_train(args, model, train_dataset, eval_dataset, accelerator)
-    
-    accelerator.print("最终评估结果:", eval_result)
+    args.logger.info("最终评估结果:", eval_result)
 
 if __name__ == '__main__':
-    args = default_parser()
-    if args.debug:
+    args, training_args = default_parser()
+    if args.mydebug:
         import debugpy
         try:
             # 5678 is the default attach port in the VS Code debug configurations. Unless a host and port are specified, host defaults to 127.0.0.1
@@ -32,4 +40,4 @@ if __name__ == '__main__':
         except Exception as e:
             pass
 
-    main(args)
+    main(args, training_args)
