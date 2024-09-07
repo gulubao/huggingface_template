@@ -40,7 +40,7 @@ from transformers.utils import (
     replace_return_docstrings,
 )
 from transformers.models.auto import AutoModelForCausalLM, AutoModelForSeq2SeqLM
-from .configuration_blip_2 import Blip2Config, Blip2QFormerConfig, Blip2VisionConfig
+from .configuration_custom import Blip2Config, Blip2QFormerConfig, Blip2VisionConfig
 
 
 logger = logging.get_logger(__name__)

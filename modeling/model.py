@@ -1,6 +1,6 @@
 
-from .configuration_blip_2 import Blip2Config
-from .modeling_blip_2 import Blip2Model
+from .configuration_custom import Blip2Config
+from .modeling_custom import Blip2Model
 
 
 def build_model(args):
