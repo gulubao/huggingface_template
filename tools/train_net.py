@@ -1,8 +1,9 @@
 import sys
 from matplotlib import font_manager as fm, pyplot as plt
 font_path = '/mnt/c/Windows/Fonts/calibri.ttf'
-fm.fontManager.addfont(font_path)
-plt.rc('font', family='Calibri')
+if os.path.exists(font_path):
+    fm.fontManager.addfont(font_path)
+    plt.rc('font', family='Calibri')
 
 sys.path.append('.') # 命令行当前所在的路径
 
@@ -18,15 +19,13 @@ def main(args, training_args):
     args.logger.info(f"\ndataset_info: {dataset_info}")
 
     model = build_model(args, training_args)
-    eval_result = do_train(
+    do_train(
         training_args=training_args, 
         model=model, 
         train_dataset=train_dataset, 
         eval_dataset=eval_dataset, 
         data_collator=data_collator, 
     )
-    
-    args.logger.info("最终评估结果:", eval_result)
 
 if __name__ == '__main__':
     args, training_args = default_parser()

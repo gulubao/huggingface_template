@@ -1,4 +1,4 @@
-from datasets import load_dataset
+from datasets import load_dataset, Dataset
 import os
 import json
 import numpy as np
@@ -36,6 +36,10 @@ def build_dataset(args, load_eval_only=False):
                                     , load_from_cache_file=False)
 
     info = json.load(open(args.info_path, 'r', encoding='utf-8'))
+
+    train_dataset = train_dataset.remove_columns(["label_xxx", "xxx"])
+    eval_dataset_df = eval_dataset.to_pandas()
+    eval_dataset  = Dataset.from_pandas(eval_dataset_df, preserve_index=False)
     return train_dataset, eval_dataset 
 
 def build_data_collator():
