@@ -1,17 +1,18 @@
 import sys
 import os
 from matplotlib import font_manager as fm, pyplot as plt
+from modeling.configuration_custom import CustomModelConfig
+from modeling.modeling_custom import CustomModel
+from engine.trainer import CustomTrainer
+from data import build_dataset, build_data_collator
+from config.defaults import default_parser
+
 font_path = '/mnt/c/Windows/Fonts/calibri.ttf'
 if os.path.exists(font_path):
     fm.fontManager.addfont(font_path)
     plt.rc('font', family='Calibri')
 
-sys.path.append('.') # 命令行当前所在的路径
-
-from config.defaults import default_parser
-from engine.trainer import do_train
-from modeling import build_model
-from data import build_dataset, build_data_collator
+sys.path.append('.')  # 命令行当前所在的路径
 
 def main(args, training_args):
     train_dataset, eval_dataset, dataset_info = build_dataset(args)
@@ -19,14 +20,37 @@ def main(args, training_args):
     args.dataset_info = dataset_info
     args.logger.info(f"\ndataset_info: {dataset_info}")
 
-    model = build_model(args, training_args)
-    do_train(
-        training_args=training_args, 
-        model=model, 
-        train_dataset=train_dataset, 
-        eval_dataset=eval_dataset, 
-        data_collator=data_collator, 
+    # Model initialization logic, similar to tune.py
+    config = CustomModelConfig(
+        embedding_dim=args.embedding_dim,
+        hidden_size=args.hidden_size,
+        intermediate_size=args.intermediate_size,
+        num_hidden_layers=args.num_hidden_layers,
+        hidden_act=args.hidden_act,
+        layer_norm_eps=args.layer_norm_eps,
+        hidden_dropout_prob=args.hidden_dropout_prob,
+        image_loss_weight=args.image_loss_weight,
+        num_labels_info=args.num_labels_info,
+        logit_scale=args.logit_scale,
+        logit_bias=args.logit_bias,
+        queue_size=args.queue_size,
+        momentum=args.momentum,
+        alpha=args.alpha,
+        label_smoothing_factor=training_args.label_smoothing_factor,
     )
+    model = CustomModel(config=config)
+
+    # Training logic, similar to tune.py
+    trainer = CustomTrainer(
+        model=model,
+        args=training_args,
+        train_dataset=train_dataset,
+        eval_dataset=eval_dataset,
+        data_collator=data_collator,
+        logger=args.logger
+    )
+
+    trainer.train()
 
 if __name__ == '__main__':
     args, training_args = default_parser()
