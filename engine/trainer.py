@@ -140,18 +140,3 @@ class CustomCallback(TrainerCallback):
     def on_log(self, args, state, control, logs=None, **kwargs):
         if state.is_local_process_zero:
             print(f"Step {state.global_step}: loss = {logs['loss']:.4f}")
-
-def do_train(args, training_args, model, model_init, train_dataset, eval_dataset, data_collator):
-    trainer = CustomTrainer(
-        model=model,
-        args=training_args,
-        model_init=model_init,
-        train_dataset=train_dataset,
-        eval_dataset=eval_dataset,
-        data_collator=data_collator, 
-        logger=args.logger
-    )
-
-    # 使用 resume_from_checkpoint 参数
-    trainer.train(resume_from_checkpoint=args.resume_from_checkpoint)
-    return 0
