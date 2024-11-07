@@ -84,3 +84,13 @@ def log_args_in_chunks(args, N=4, logger=None):
     
     # 一次性记录整个日志消息
     logger.info(log_message.getvalue().strip())
+
+def merge_args(args, training_args):
+    """
+    将 args 和 training_args 合并为一个对象
+    """
+    # 将 training_args 的所有属性复制到 args
+    for key, value in vars(training_args).items():
+        if not hasattr(args, key):
+            setattr(args, key, value)
+    return args
