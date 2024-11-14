@@ -25,8 +25,6 @@ class EvalLoopOutput(NamedTuple):
 
 logger = logging.get_logger(__name__)
 
-
-
 class CustomTrainer(Trainer):
     def __init__(self, model, args, model_init, train_dataset, eval_dataset, data_collator, logger):
         super().__init__(model=model, args=args, model_init=model_init, train_dataset=train_dataset, eval_dataset=eval_dataset, data_collator=data_collator)

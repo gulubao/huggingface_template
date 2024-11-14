@@ -1,3 +1,15 @@
+// 在需要调试的地方添加:
+
+// import debugpy
+// try:
+//     # 5678 is the default attach port in the VS Code debug configurations. Unless a host and port are specified, host defaults to 127.0.0.1
+//     debugpy.listen(("localhost", 9501))
+//     print("Waiting for debugger attach")
+//     debugpy.wait_for_client()
+// except Exception as e:
+//     pass
+
+
 {
     // 使用 IntelliSense 了解相关属性。 
     // 悬停以查看现有属性的描述。
@@ -12,7 +24,7 @@
                 "host": "localhost",
                 "port": 9501 // sudo lsof -i :9501 # 找出占用9501端口的进程
             },
-            "justMyCode": false,
+            "justMyCode": true,
             "pathMappings": [ // Debug only into specific packages
                 {
                     "localRoot": "${workspaceFolder}",

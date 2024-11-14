@@ -10,15 +10,15 @@ from config.defaults import default_parser
 import matplotlib
 matplotlib.use('Agg')
 from matplotlib import font_manager as fm, pyplot as plt
-# font_path = '/mnt/c/Windows/Fonts/calibri.ttf'
-# if os.path.exists(font_path):
-#     fm.fontManager.addfont(font_path)
-#     plt.rc('font', family='Calibri')
-# Update the font path to Comic Sans MS
-font_path = '/mnt/c/Windows/Fonts/comic.ttf'  # Ensure this path is correct for your system
+font_path = '/mnt/c/Windows/Fonts/calibri.ttf'
 if os.path.exists(font_path):
     fm.fontManager.addfont(font_path)
-    plt.rc('font', family='Comic Sans MS')
+    plt.rc('font', family='Calibri')
+# Update the font path to Comic Sans MS
+# font_path = '/mnt/c/Windows/Fonts/comic.ttf'  # Ensure this path is correct for your system
+# if os.path.exists(font_path):
+#     fm.fontManager.addfont(font_path)
+#     plt.rc('font', family='Comic Sans MS')
 
 sys.path.append('.')  # 命令行当前所在的路径
 
