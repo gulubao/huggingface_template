@@ -47,6 +47,32 @@ class CustomArguments:
     # -----------------------------------------------------------------------------
     retrive_batch_size: int = field(default=256, metadata={"help": "Batch size for retriving the topk accuracy"})
 
+    def __post_init__(self):
+        """初始化后的处理"""
+        # 设置实验名称
+        if self.experiment_name == "{output_dir}.name":
+            self.experiment_name = Path(self.output_dir).name
+            
+        # 设置日志器
+        if self.logger is None:
+            self.logger = setup_logger_tf(self)
+            
+        # 处理文件路径
+        if "{output_dir}" in str(self.train_path):
+            self.train_path = Path(self.output_dir) / "propossed" / "train.csv"
+            self.train_path.parent.mkdir(parents=True, exist_ok=True)
+            
+        if "{output_dir}" in str(self.eval_path):
+            self.eval_path = Path(self.output_dir) / "propossed" / "eval.csv"
+            
+        # 验证参数
+        self._validate_args()
+        
+    def _validate_args(self):
+        """验证参数的有效性"""
+        # 添加验证逻辑
+        pass
+
 @dataclass
 class CustomTrainingArguments(TrainingArguments):
     output_dir: str = field(
@@ -171,44 +197,42 @@ class CustomTrainingArguments(TrainingArguments):
         default=False, 
         metadata={"help": "Whether to use full float16 evaluation instead of 32-bit. This will be faster and save memory but can harm metric values."}
     )
+
+    def __post_init__(self):
+        """初始化后的处理"""
+        super().__post_init__()  # 调用父类的post_init
+        
+        # 处理输出目录
+        self.output_dir = Path(self.output_dir).resolve()
+        self.output_dir.mkdir(parents=True, exist_ok=True)
+        self.output_dir = str(self.output_dir)  # 转回字符串,因为父类期望字符串
+        
+        # 验证参数
+        self._validate_args()
+        
+    def _validate_args(self):
+        """验证参数的有效性"""
+        # 添加验证逻辑
+        pass
+
 def default_parser():
-    # 1. Parse input arguments
-    # See all possible arguments in src/transformers/training_args.py
-    # or by passing the --help flag to this script.
-    # We now keep distinct sets of args, for a cleaner separation of concerns.
+    """解析命令行参数"""
     parser = HfArgumentParser((CustomArguments, CustomTrainingArguments))
+    
     if len(sys.argv) == 2 and sys.argv[1].endswith(".json"):
-        # If we pass only one argument to the script and it's the path to a json file,
-        # let's parse it to get our arguments.
-        args, training_args = parser.parse_json_file(json_file=os.path.abspath(sys.argv[1]))
+        args, training_args = parser.parse_json_file(
+            json_file=os.path.abspath(sys.argv[1])
+        )
     else:
         args, training_args = parser.parse_args_into_dataclasses()
-
-    # -----------------------------------------------------------------------------
-    # 更新地址相关参数
-    # -----------------------------------------------------------------------------
-    training_args.output_dir = Path(training_args.output_dir).resolve()
-    training_args.output_dir.mkdir(parents=True, exist_ok=True)
-    args.experiment_name = training_args.output_dir.name
-    args.logger = setup_logger_tf(args, training_args)
+        
+    # 设置随机种子
     set_seed(training_args.seed)
-    args.train_path = training_args.output_dir / "propossed" / "train.csv"
-    args.eval_path = training_args.output_dir / "propossed" / "eval.csv"
-    args.train_path.parent.mkdir(parents=True, exist_ok=True)
-    training_args.output_dir = str(training_args.output_dir)
-    # 更新xxx参数
-
-
-    # -----------------------------------------------------------------------------
-    # 条件限制
-    # -----------------------------------------------------------------------------
-    # assert pass
-
-    # -----------------------------------------------------------------------------
-    # 打印参数
-    # -----------------------------------------------------------------------------
+    
+    # 打印参数(可选,因为这些也可以移到__post_init__中)
     log_args_in_chunks(args, N=4, logger=args.logger)
     log_args_in_chunks(training_args, N=4, logger=args.logger)
+    
     return args, training_args
 
 if __name__ == "__main__":
